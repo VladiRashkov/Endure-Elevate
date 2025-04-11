@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Pace Adjustment</title>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            background: linear-gradient(to right, #4facfe, #00f2fe); /* Gradient background */
+            color: #333;
+        }
+
+        h1, p { 
+            color: white; /* Make "Pace Adjustment" and "Distance" text white */
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 80%; /* Adjust width to center the table */
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #333;
+            color: white; /* White text for table headers */
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        input {
+            width: 80px; /* Adjust box width */
+            margin-left: 10px; /* Reduce space between input boxes and kilometer numbers */
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pace Adjustment</h1>
+    <p>Distance: {{ distance }} km</p>
+    <form id="paceForm">
+        <table>
+            <thead>
+                <tr>
+                    <th>Kilometer</th>
+                    <th>Pace (MM:SS)</th>
+                </tr>
+            </thead>
+            <tbody id="paceTable">
+                {% for km, pace in pace_data.items() %}
+                <tr>
+                    <td>{{ km }}</td>
+                    <td>
+                        <input type="text" 
+                                name="pace_{{ km }}" 
+                                value="{{ pace }}" 
+                                data-km="{{ km }}" 
+                                placeholder="Enter pace (mm:ss)">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+</body>
+</html>

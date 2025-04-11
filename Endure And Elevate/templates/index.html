@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Marathon Pace Planner</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Marathon Pace Planner</h1>
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+        <form method="POST" action="/calculate/">
+            <label for="distance">Distance (in kilometers):</label>
+            <input type="number" name="distance" required>
+        
+            <label for="goal_time">Goal Time (HH:MM:SS):</label>
+            <input type="text" name="goal_time" required>
+        
+            <button type="submit">Submit</button>
+        </form>
+        
+    </div>
+</body>
+</html>
