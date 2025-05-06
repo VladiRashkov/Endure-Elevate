@@ -8,28 +8,18 @@ from geopy.distance import geodesic
 import os
 from src.utils.helpers import format_pace
 
-def generate_elevation_chart(polyline_data, elevation_high, elevation_low, total_distance):
-    coordinates = polyline.decode(polyline_data)
-    segment_distances = [0]
-    elevations = []
 
-    for i in range(1, len(coordinates)):
-        start, end = coordinates[i - 1], coordinates[i]
-        segment_distance = geodesic(start, end).meters + segment_distances[-1]
-        segment_distances.append(segment_distance)
+def generate_elevation_chart(elevation_high, elevation_low):
+    plt.figure(figsize=(6, 3))
+    elevation_gain = elevation_high - elevation_low
+    labels = ["Elevation Gain"]
+    values = [elevation_gain]
 
-        elevation = elevation_low + (elevation_high - elevation_low) * (segment_distance / total_distance)
-        elevations.append(elevation)
-
-    plt.figure(figsize=(8, 4))
-    plt.plot(segment_distances[1:], elevations, marker='o', color='green', label="Elevation (m)")
-
-    plt.title("Elevation Profile")
+    plt.bar(labels, values, color="green")
+    plt.title("Elevation Gain")
+    plt.ylabel("Meters")
     plt.xticks([])
-    plt.ylabel("Elevation (m)")
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.legend()
-    
+    plt.show()
     return mpld3.fig_to_html(plt.gcf())
 
 def generate_heart_rate_chart(avg_hr, max_hr):

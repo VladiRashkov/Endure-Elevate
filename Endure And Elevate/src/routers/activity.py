@@ -94,7 +94,7 @@ def daily_activity(activity_id):
         avg_pace = format_pace(avg_pace_seconds)
         
         pace_chart_html = generate_pace_chart(paces)
-        elevation_chart_html = generate_elevation_chart(summary_polyline, elevation_high, elevation_low, total_distance)
+        elevation_chart_html = generate_elevation_chart(elevation_high, elevation_low)
         hr_chart_html = generate_heart_rate_chart(avg_hr, max_hr)
         vo2_max_chart_html = generate_vo2_max_progress(vo2_max)
         map_path = create_map(summary_polyline, avg_pace, elevation_gain, vo2_max, avg_hr, calories, avg_cadence)
