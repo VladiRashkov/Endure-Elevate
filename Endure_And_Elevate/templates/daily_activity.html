@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Activity</title>
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <!-- Page Styling -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            background: linear-gradient(to right, #00587A, #ffffff); /* Gradient background */
+            color: #333;
+        }
+
+        h1 {
+            margin: 20px 0;
+            color: #fff;
+            font-size: 2em;
+            text-align: center;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        h2 {
+            margin: 15px 0;
+            color: #fff;
+            font-size: 1.5em;
+            text-align: center;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .navigation {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        a {
+            text-decoration: none;
+            color: white; /* Yellow/Orange color */
+            font-size: 1.2em;
+            padding: 10px;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: rgb(255, 255, 255); /* Brighter Yellow */
+            text-decoration: underline;
+        }
+
+        iframe {
+            border: none;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            margin: 20px 0;
+        }
+
+        .summary-section, .route-map-section {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 800px;
+        }
+
+        .summary-section h2, .route-map-section h2 {
+            color: #333;
+            text-align: left;
+            margin-bottom: 10px;
+        }
+        .hover-button {
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #00f2fe;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .hover-button:hover {
+            background-color: #ffffff; /* Darker shade on hover */
+            transform: scale(1.05); /* Slightly enlarges the button */
+        }
+        .user-widget {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ffffff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+        .user-widget:hover .dropdown {
+            display: block;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            width: 60px;
+            text-align: left;
+        }
+        .dropdown a {
+            display: block;
+            padding: 10px;
+            color: #333;
+            text-decoration: none;
+        }
+        .dropdown a:hover {
+            background: #f4f4f4;
+        }
+
+    </style>
+</head>
+<body>
+   
+    <div class="back-button" style="
+    position: absolute; 
+    top: 10px; 
+    left: 10px;">
+        <a href="{{ url_for('token.back_to_panel') }}">
+            <button style="
+                padding: 10px 20px; 
+                font-size: 1em; 
+                background-color: #00f2fe; 
+                color: white; 
+                border: none; 
+                border-radius: 5px; 
+                cursor: pointer; 
+                transition: background-color 0.3s ease;">
+                < Back to Main Panel
+            </button>
+        </a>
+        
+    </div>
+
+    
+    <!-- Navigation Links -->
+    <div class="navigation">
+        {% if previous_activity %}
+            <a href="{{ url_for('activity.daily_activity', activity_id=previous_activity.id) }}">
+                <i class="fas fa-arrow-left"></i> Previous Activity
+            </a>
+        {% endif %}
+        
+        <span style="color: #999; font-size: 1.2em;">|</span>
+        
+        {% if next_activity %}
+            <a href="{{ url_for('activity.daily_activity', activity_id=next_activity.id) }}">
+                Next Activity <i class="fas fa-arrow-right"></i>
+            </a>
+        {% endif %}
+    </div>
+
+   
+    <div class="summary-section">
+        <h2>Summary of Activity</h2>
+        <p>
+            <b>Date:</b> {{ current_activity.start_date.replace('T', ' Start Time: ').replace('Z', '')}}<br>
+            <b>Total Distance:</b> {{ "%.2f"|format(current_activity.distance / 1000) }} km<br>
+            <b>Moving Time:</b> {{ "%02d:%02d:%02d"|format(current_activity.moving_time // 3600, (current_activity.moving_time % 3600) // 60, current_activity.moving_time % 60) }}<br>
+            <b>Average Pace:</b> 
+            {{
+                "%d:%02d"|format(
+                    (current_activity.moving_time / (current_activity.distance / 1000)) // 60, 
+                    (current_activity.moving_time / (current_activity.distance / 1000)) % 60
+                )
+            }} min/km<br>
+            <b>Elevation Gain:</b> {{ current_activity.total_elevation_gain }} m<br>
+        </p>
+    </div>
+
+    <!-- Route Map Section -->
+    <div class="route-map-section">
+        <h2>Route Map</h2>
+        <iframe src="{{ map_path }}" width="100%" height="500px"></iframe>
+    </div>
+
+    <!-- Other Sections -->
+    <div class="summary-section">
+        <h2>Pace Dynamics</h2>
+        {{ pace_chart|safe }}
+    </div>
+
+    <div class="summary-section">
+        <h2>Elevation Profile</h2>
+        {{ elevation_chart|safe }}
+    </div>
+
+    <div class="summary-section">
+        <h2>Heart Rate</h2>
+        {{ hr_chart|safe }}
+    </div>
+
+    <div class="summary-section">
+        <h2>VO2 Max</h2>
+        {{ vo2_max_chart|safe }}
+    </div>
+    <div class="user-widget">
+        <span>{{ user_name }}</span>
+        <span class="dropdown-icon">&#9662;</span>
+        <div class="dropdown">
+            <a href="{{ url_for('user.logout') }}">Logout</a>
+        </div>
+    </div>
+    <div class="user-widget"></div>
+        <span>{{ user_name }}</span>
+        <span class="dropdown-icon">&#9662;</span>
+        <div class="dropdown">
+            <a href="{{ url_for('user.logout') }}">Logout</a>
+        </div>
+    </div>
+
+</body>
+</html>

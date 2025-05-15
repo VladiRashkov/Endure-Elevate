@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Run Analysis</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            background: linear-gradient(to right, #00587A, #ffffff); /* Gradient background */
+            color: #333;
+        }
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px 0;
+            background: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background: #00587A;
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        tr:hover {
+            background: #f1f1f1;
+        }
+        h1 {
+            margin: 20px 0;
+            text-transform: uppercase;
+            font-size: 24px;
+            color: #333;
+        }
+        .user-widget {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ffffff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+        .user-widget:hover .dropdown {
+            display: block;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            width: 60px;
+            text-align: left;
+        }
+        .dropdown a {
+            display: block;
+            padding: 10px;
+            color: #333;
+            text-decoration: none;
+        }
+        .dropdown a:hover {
+            background: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1>Last Three Runs</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Distance</th>
+                <th>Time Taken</th>
+                <th>Pace</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for run in last_three_runs %}
+            <tr>
+                <td>{{ run.name }}</td>
+                <td>{{ run.date.replace('T', ' Start Time: ').replace('Z', '') }}</td>
+                <td>{{ run.distance_km }}</td>
+                <td>{{ run.time_taken }}</td>
+                <td>{{ run.pace }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h1>Monthly Kilometers for {{ latest_year }} (Total: {{ total_distance }})</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Month</th>
+                <th>Distance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for month in monthly_progress %}
+            <tr>
+                <td>{{ month.month }}</td>
+                <td>{{ month.distance_km }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="user-widget"></div>
+        <span>{{ user_name }}</span>
+        <span class="dropdown-icon">&#9662;</span>
+        <div class="dropdown">
+            <a href="{{ url_for('user.logout') }}">Logout</a>
+        </div>
+    </div>
+</body>
+</html>

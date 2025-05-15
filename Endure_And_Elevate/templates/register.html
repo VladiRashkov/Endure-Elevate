@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+     
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            background: linear-gradient(to right, #00587A, #ffffff); /* Gradient background */
+            color: #333;
+        }
+        h1 {
+            margin-top: 20px;
+            font-size: 2.5em;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        form {
+            margin-top: 30px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            width: 300px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #00587A;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #00f2fe;
+        }
+        .flash-messages {
+            color: white; /* Change text color to white */
+            font-size: 1.2em; /* Increase font size */
+            font-weight: bold; /* Make the text bold for emphasis */
+            text-align: center; /* Center-align the text */
+            margin: 20px 0; /* Add spacing above and below the message */
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>Register</h1>
+    <!-- Flash messages -->
+    {% with messages = get_flashed_messages() %}
+         {% if messages %}
+     <div class="flash-messages">
+         {% for message in messages %}
+             <p>{{ message }}</p>
+         {% endfor %}
+     </div>
+        {% endif %}
+    {% endwith %}
+    <form method="POST">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">Register</button>
+    </form>
+    <p>Already have an account? <a href="/user/login" style="color: white;">Login here</a></p>
+</body>
+</html>

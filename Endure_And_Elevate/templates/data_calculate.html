@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Marathon Pace Planner</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            background: linear-gradient(to right, #00587A, #ffffff);
+            color: #333;
+        }
+        h1 {
+            font-size: 2.5em; /* Increased size for emphasis */
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-top: 5px; /* Moves the sign higher */
+            margin-bottom: 80px; /* Adds space below the sign */
+            text-transform: uppercase;
+            text-align: center;
+        }
+        label{
+            font-size: 2em;
+            font-weight:normal;
+            color: #ffffff;
+            margin-bottom: 5px;
+            text-align: center;
+            display: block;
+            width: 100%;
+        }
+        input{
+            width: 100%;
+            padding: 12px 20px;
+            margin: 20px 0;
+            display: inline-block;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button{
+            width: 100%;
+            padding: 14px 20px;
+            margin: 20px 0;
+            color: #ffffff;
+            font-size: x-large;
+            background-color: #00587A;
+        }
+        button:hover{
+            background: #00f2fe;
+            color: rgb(255, 255, 255);
+            transform: translateY(-3px);
+        }
+        .user-widget {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ffffff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+        .user-widget:hover .dropdown {
+            display: block;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            width: 60px;
+            text-align: left;
+        }
+        .dropdown a {
+            display: block;
+            padding: 10px;
+            color: #333;
+            text-decoration: none;
+        }
+        .dropdown a:hover {
+            background: #f4f4f4;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <h1>Marathon Pace Planner</h1>
+        {% if error %}
+        <p class="error">{{ error }}</p>
+        {% endif %}
+        <form method="POST" action="/calculate/">
+            <label for="distance">Distance (in kilometers):</label>
+            <input type="number" name="distance" required>
+        
+            <label for="goal_time">Goal Time (HH:MM:SS):</label>
+            <input type="text" name="goal_time" required>
+        
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+    <div class="user-widget">
+        <span>{{ user_name }}</span>
+        <span class="dropdown-icon">&#9662;</span>
+        <div class="dropdown">
+            <a href="{{ url_for('user.logout') }}">Logout</a>
+        </div>
+    </div>
+</body>
+</html>

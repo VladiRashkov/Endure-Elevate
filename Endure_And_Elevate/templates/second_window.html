@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Runs & Features</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(to right, #00587A, #ffffff);
+        }
+        h1 {
+            font-size: 2.5em; /* Increased size for emphasis */
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            margin-top: 5px; /* Moves the sign higher */
+            margin-bottom: 80px; /* Adds space below the sign */
+            text-transform: uppercase;
+            text-align: center;
+            /* border-bottom: 3px solid #ffffff; Underlines the sign */
+            display: inline-block;
+        }
+        .dialing-pad {
+            display: grid;
+            text-decoration: none;
+            grid-template-columns: 1fr 1fr; /* Ensures two equal columns */
+            grid-template-rows: repeat(2, 1fr); /* Creates two equal-sized rows */
+            gap: 10px; /* Adds spacing between buttons */
+            width: 80%;
+            height: 70%;
+            }
+        .dialing-pad a {
+           text-decoration: none; 
+            }
+        
+        .dialing-pad button {
+            background: linear-gradient(to left, #00587A, #ffffff);
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 2em;
+            text-decoration: none;
+            font-family: Montserrat;
+            /* margin-top: 100px; Large text for better visibility */
+            font-weight: normal;
+            color: #333;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%; /* Ensures button stretches to occupy full space */
+            height: 100%; /* Ensures button stretches vertically */
+        }
+        .dialing-pad button:hover {
+            background: linear-gradient(to right, #00587A, #ffffff);
+            color: #ffffff;
+            transform: translateY(-3px);
+        }
+        .user-widget {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ffffff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+        .user-widget:hover .dropdown {
+            display: block;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            width: 60px;
+            text-align: left;
+        }
+        .dropdown a {
+            display: block;
+            padding: 10px;
+            color: #333;
+            text-decoration: none;
+        }
+        .dropdown a:hover {
+            background: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cool Sign Above the Dialing Pad -->
+    <h1>Endure & Elevate</h1>
+
+    <!-- Dialing Pad Section -->
+    <div class="dialing-pad">
+        <a href="{{ url_for('activity.daily_activity', activity_id=recent_activity_id) }}">
+            <button>Daily Run</button>
+        </a>
+        <a href="{{ url_for('activity.get_progress') }}">
+            <button>Running Progress</button>
+        </a>
+        <a href="/all_time_runs">
+            <button>All-Time Runs</button>
+        </a>
+        <a href="/calculate/">
+            <button>Pace Calculator</button>
+        </a>
+        <!-- <a href="#best-efforts">
+            <button>Best Efforts</button>
+        </a>
+        <a href="#predictions">
+            <button>Predictions</button>
+        </a> -->
+    </div>
+
+    <!-- User Widget with Dropdown -->
+    <div class="user-widget">
+        <span>{{ user_name }}</span>
+        <span class="dropdown-icon">&#9662;</span>
+        <div class="dropdown">
+            <a href="{{ url_for('user.logout') }}">Logout</a>
+        </div>
+    </div>
+</body>
+</html>

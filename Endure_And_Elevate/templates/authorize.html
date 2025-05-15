@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authorize Strava</title>
+    <script>
+        function openAuthWindow() {
+            const authUrl = "https://www.strava.com/oauth/authorize?client_id=153633&response_type=code&redirect_uri=http://localhost:5000/callback/exchange_token&approval_prompt=force&scope=activity:read_all";
+            window.open(authUrl, "_blank", "width=800,height=600"); 
+        }
+    </script>
+</head>
+<body onload="openAuthWindow()">
+    <h1>Redirecting to Strava Authorization...</h1>
+</body>
+</html>

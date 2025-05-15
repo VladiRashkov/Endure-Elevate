@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Pace Adjustment</title>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            background: linear-gradient(to right, #00587A, #ffffff); /* Gradient background */
+            color: #333;
+        }
+
+        h1{ 
+            color: white; 
+            font-size: xx-large;
+            font-family: 'Times New Roman', Times, serif;
+        }
+        h2 { 
+            color: white; 
+            font-size: x-large;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        table {
+            width: 70vw; /* Makes the table fill the full viewport width */
+            height: 70vh; /* Makes the table fill the full viewport height */
+            border-collapse: separate;
+            margin: 0;
+        }
+
+        th, td {
+            width: 100%;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #00587A;
+            color: white; /* White text for table headers */
+        }
+
+        td {
+            background-color: #f9f9f9;
+        }
+
+        input {
+            width: 1200px;
+            height: 50px; /* Adjust box width */
+            margin-left: 10px; /* Reduce space between input boxes and kilometer numbers */
+            text-align: center;
+            box-sizing: border-box;
+            font-size: x-large;
+            font-family: 'Times New Roman', Times, serif ;
+            color: #00587A;
+        }
+        .user-widget {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ffffff;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+        .user-widget:hover .dropdown {
+            display: block;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            width: 60px;
+            text-align: left;
+        }
+        .dropdown a {
+            display: block;
+            padding: 10px;
+            color: #333;
+            text-decoration: none;
+        }
+        .dropdown a:hover {
+            background: #f4f4f4;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>Pace Adjustment</h1>
+    <h2>Distance: {{ distance }} km</h2>
+    <form id="paceForm">
+        <table>
+            <thead>
+                <tr>
+                    <th>Kilometer</th>
+                    <th>Pace (MM:SS)</th>
+                </tr>
+            </thead>
+            <tbody id="paceTable">
+                {% for km, pace in pace_data.items() %}
+                <tr>
+                    <td>{{ km }}</td>
+                    <td>
+                        <input type="text" 
+                                name="pace_{{ km }}" 
+                                value="{{ pace }}" 
+                                data-km="{{ km }}" 
+                                placeholder="Enter pace (mm:ss)">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="user-widget">
+            <span>{{ user_name }}</span>
+            <span class="dropdown-icon">&#9662;</span>
+            <div class="dropdown">
+                <a href="{{ url_for('user.logout') }}">Logout</a>
+            </div>
+        </div>
+    </form>
+</body>
+</html>
