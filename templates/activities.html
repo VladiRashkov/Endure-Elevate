@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Activities</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand: #0b5c7e;
+      --brand-deep: #073b52;
+      --ink: #12262f;
+      --muted: #55707c;
+      --line: #cfdde3;
+      --page: #f5f8fa;
+      --font-display: "Bricolage Grotesque", "Segoe UI", sans-serif;
+      --font-body: "Figtree", "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--page);
+      font-family: var(--font-body);
+    }
+    .header {
+      color: #fff;
+      background: linear-gradient(160deg, var(--brand-deep), var(--brand));
+      padding: 28px max(20px, 5vw) 36px;
+    }
+    .header-inner, main {
+      width: min(1100px, 100%);
+      margin: 0 auto;
+    }
+    .back {
+      color: rgba(255, 255, 255, .85);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .back:hover { color: #fff; }
+    h1 {
+      margin: 34px 0 8px;
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1;
+    }
+    .subtitle { margin: 0; color: rgba(255, 255, 255, .8); }
+    main { padding: 28px max(20px, 5vw) 56px; }
+    .table-wrap {
+      overflow-x: auto;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      box-shadow: 0 12px 28px rgba(7, 59, 82, .08);
+    }
+    table { width: 100%; border-collapse: collapse; min-width: 680px; }
+    th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--line); }
+    th {
+      color: var(--muted);
+      background: #f8fbfc;
+      font-size: .78rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    tr:last-child td { border-bottom: 0; }
+    td { font-size: .95rem; }
+    .name { font-weight: 600; }
+    .muted { color: var(--muted); }
+    .open {
+      display: inline-block;
+      padding: 7px 11px;
+      color: var(--brand);
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      font-weight: 600;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .open:hover { border-color: var(--brand); background: #f1f8fb; }
+    .empty { padding: 28px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <a class="back" href="{{ url_for('activity.default_activity') }}">Back to latest activity</a>
+      <h1>Activities</h1>
+      <p class="subtitle">{{ activities|length }} recorded activities</p>
+    </div>
+  </header>
+
+  <main>
+    {% if activities %}
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Date</th>
+              <th>Distance</th>
+              <th>Moving time</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for activity in activities %}
+              <tr>
+                <td class="name">{{ activity.name or 'Unnamed activity' }}</td>
+                <td>{{ activity.type or '—' }}</td>
+                <td class="muted">{{ activity.start_date or '—' }}</td>
+                <td>{{ '%.2f'|format((activity.distance or 0) / 1000) }} km</td>
+                <td>{{ activity.moving_time or 0 }} sec</td>
+                <td><a class="open" href="{{ url_for('activity.daily_activity', activity_id=activity.id) }}">Open</a></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="empty">No activities were found for this user.</p>
+    {% endif %}
+  </main>
+</body>
+</html>
