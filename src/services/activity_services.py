@@ -8,16 +8,18 @@ import pytz
 
 SessionLocal = sessionmaker(bind=engine)
 
-def fetch_and_preprocess_activities(access_token, user_id):
+def fetch_and_preprocess_activities(access_token, user_id, after_epoch=None):
     dfs_to_concat = []
     page_number = 1
 
     while True:
         
-        data = access_activity_data(access_token, params={'per_page': 200, 'page': page_number})
+        params = {'per_page': 200, 'page': page_number}
+        if after_epoch:
+            params['after'] = after_epoch
+        data = access_activity_data(access_token, params=params)
         if not data:
             break
-       
         dfs_to_concat.append(preprocess_data(data))
         page_number += 1
 

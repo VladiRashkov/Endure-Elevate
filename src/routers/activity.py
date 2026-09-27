@@ -1,12 +1,14 @@
 from datetime import datetime
 from flask import Blueprint, render_template, session, redirect, url_for, jsonify
 from sqlalchemy.orm import sessionmaker
+from src.routers.token import db_session, login_required
 from src.db.database_models import engine, Activity
 from src.utils.activity_utils import create_map, \
 generate_elevation_chart, generate_vo2_max_progress, generate_heart_rate_chart,\
     calculate_pace_dynamics, generate_pace_chart
 from src.utils.helpers import seconds_to_hms, calculate_pace, \
     calculate_vo2_max, format_pace
+from src.utils.training_load import calculate_acwr
 
 SessionLocal = sessionmaker(bind=engine)
 activity_routes = Blueprint('activity', __name__)
@@ -196,3 +198,13 @@ def get_progress():
         return f"An error occurred: {e}"
     finally:
         session_db.close()
+
+@activity_routes.route("/training-load")
+@login_required
+def training_load():
+    user_id = session['user_id']
+    with db_session() as db:
+        activities = db.query(Activity).filter(Activity.user_id == user_id).all()
+        resting_hr, max_hr = 50, 190  # placeholder until sourced properly
+        acwr = calculate_acwr(activities, resting_hr, max_hr)
+    return render_template("training_load.html", acwr=acwr)

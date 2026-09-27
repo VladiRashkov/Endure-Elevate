@@ -3,7 +3,8 @@ import logging
 import os
 from contextlib import contextmanager
 from functools import wraps
-
+import pytz
+from datetime import datetime
 import pandas as pd
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for
 from sqlalchemy.orm import sessionmaker
@@ -40,6 +41,17 @@ def db_session():
     finally:
         db.close()
 
+SOFIA_TZ = pytz.timezone("Europe/Sofia")
+def _epoch_from_stored_start_date(start_date):
+    """start_date as stored is a naive Europe/Sofia local datetime (or, for
+    legacy rows, the same shape as a string) -- Strava's `after` param wants
+    a UTC epoch, so convert back."""
+    if isinstance(start_date, str):
+        dt_naive = datetime.strptime(start_date.rstrip('Z').replace('T', ' '), '%Y-%m-%d %H:%M:%S')
+    else:
+        dt_naive = start_date
+    local_dt = SOFIA_TZ.localize(dt_naive)
+    return int(local_dt.astimezone(pytz.utc).timestamp())
 
 def login_required(view):
     @wraps(view)
@@ -179,16 +191,25 @@ def sync_now():
 @token_routes.route('/back_to_panel')
 @login_required
 def back_to_panel():
-    """The main panel: reads from the database. Does NOT call Strava."""
+    """The main panel: reads from the database, plus one bounded Strava
+    check per login for anything newer than what's already stored."""
     user_id = session['user_id']
 
     with db_session() as db:
+        if not session.get('synced_this_login'):
+            access_token = get_valid_access_token(db, user_id, STRAVA_CLIENT_ID, STRAVA_CLIENT_SECRET)
+            if access_token:
+                latest = _get_recent_activity_from_db(db, user_id)
+                after_epoch = _epoch_from_stored_start_date(latest.start_date) - 300 if latest else None
+                fetch_and_preprocess_activities(access_token, user_id, after_epoch=after_epoch)
+            session['synced_this_login'] = True
+
         recent_activity = _get_recent_activity_from_db(db, user_id)
 
-        return render_template(
-            'second_window.html',
-            recent_activity_id=recent_activity.id if recent_activity else None,
-        )
+    return render_template(
+        'second_window.html',
+        recent_activity_id=recent_activity.id if recent_activity else None,
+    )
 
 
 @token_routes.route('/all_time_runs')
