@@ -37,27 +37,58 @@ def generate_heart_rate_chart(avg_hr, max_hr):
 
 
 def calculate_pace_dynamics(polyline_data, total_distance, total_time):
+    """Walks the decoded GPS polyline and buckets it into per-kilometer
+    pace splits.
+
+    A single GPS segment (the gap between two consecutive polyline points)
+    can span more than one kilometer -- sparse points on a straight
+    stretch, or a brief GPS jump. When that happens, this splits that
+    segment's time proportionally at each km boundary it crosses, carrying
+    the remainder forward -- rather than crediting an entire oversized
+    segment's time to one km split and then discarding the leftover time
+    for the next split (which produced a spurious slow spike followed by
+    an impossibly fast "catch-up" split).
+    """
     coordinates = polyline.decode(polyline_data)
+    if len(coordinates) < 2 or not total_distance or not total_time:
+        return []
+
     paces = []
-    distance_covered = 0
-    time_covered = 0
-    km_distance = 1000
+    distance_covered = 0.0
+    time_covered = 0.0
+    km_distance = 1000.0
 
     for i in range(len(coordinates) - 1):
         start, end = coordinates[i], coordinates[i + 1]
         segment_distance = geodesic(start, end).meters
+        if segment_distance <= 0:
+            continue
         segment_time = total_time * (segment_distance / total_distance)
-        distance_covered += segment_distance
-        time_covered += segment_time
 
-        if distance_covered >= km_distance:
+        remaining_distance = segment_distance
+        remaining_time = segment_time
+
+        while distance_covered + remaining_distance >= km_distance:
+            distance_needed = km_distance - distance_covered
+            fraction = distance_needed / remaining_distance
+            time_needed = remaining_time * fraction
+
+            time_covered += time_needed
             minutes = int(time_covered // 60)
             seconds = int(time_covered % 60)
             paces.append(f"{minutes}:{seconds:02d}")
-            distance_covered -= km_distance
-            time_covered = 0
 
-    if distance_covered > 0:
+            remaining_distance -= distance_needed
+            remaining_time -= time_needed
+            distance_covered = 0.0
+            time_covered = 0.0
+
+        distance_covered += remaining_distance
+        time_covered += remaining_time
+
+    # ignore a leftover under 1 meter -- floating-point noise from the
+    # geodesic math, not a real partial kilometer worth reporting
+    if distance_covered > 1.0:
         minutes = int(time_covered // 60)
         seconds = int(time_covered % 60)
         paces.append(f"{minutes}:{seconds:02d}")
@@ -205,8 +236,7 @@ def generate_pace_chart(paces):
         return pad_l + (plot_w * i / (n - 1) if n > 1 else plot_w / 2)
 
     def y_of(v):
-        return pad_t + plot_h * (1 - (v - lo) / (hi - lo))
-
+        return pad_t + plot_h * ((v - lo) / (hi - lo))
     def fmt(sec):
         sec = int(sec)
         return f"{sec // 60}:{sec % 60:02d}"

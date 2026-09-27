@@ -4,7 +4,7 @@ found by a sliding window over the per-kilometer splits.
 """
 import pytest
 
-import best_efforts as be
+from src.utils import best_efforts as be
 
 
 # ---------- _pace_str_to_seconds ----------

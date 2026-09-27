@@ -9,7 +9,7 @@ generate_elevation_chart, generate_vo2_max_progress, generate_heart_rate_chart,\
 from src.utils.helpers import seconds_to_hms, calculate_pace, \
     calculate_vo2_max, format_pace
 from src.utils.training_load import calculate_acwr
-
+from src.utils.best_efforts import find_best_efforts, format_seconds_as_clock
 SessionLocal = sessionmaker(bind=engine)
 activity_routes = Blueprint('activity', __name__)
 
@@ -70,10 +70,16 @@ def daily_activity(activity_id):
             .filter(Activity.user_id == user_id, Activity.id == activity_id)
             .first()
         )
-        
+        def _as_datetime(value):
+            """start_date can be a real datetime or a leftover string, depending on
+            when the row was saved."""
+            if isinstance(value, datetime):
+                return value
+            v = value.rstrip('Z').replace('T', ' ')
+            return datetime.strptime(v, '%Y-%m-%d %H:%M:%S')
         if not activity:
             return render_template("error.html", message="Activity not found.")
-        
+        start_display = _as_datetime(activity.start_date).strftime('%d %b %Y, %H:%M')
         previous_activity = (
             session_db.query(Activity)
             .filter(Activity.user_id == user_id, Activity.id < activity_id)
@@ -121,6 +127,7 @@ def daily_activity(activity_id):
             current_activity=activity,
             previous_activity=previous_activity,
             next_activity=next_activity,
+            start_display=start_display,
         )
     finally:
         session_db.close()
@@ -208,3 +215,41 @@ def training_load():
         resting_hr, max_hr = 50, 190  # placeholder until sourced properly
         acwr = calculate_acwr(activities, resting_hr, max_hr)
     return render_template("training_load.html", acwr=acwr)
+
+@activity_routes.route("/best-efforts")
+@login_required
+def best_efforts():
+    user_id = session['user_id']
+    global_best = {}  # distance_km -> {time_seconds, activity_id, achieved_on}
+
+    with db_session() as db:
+        activities = db.query(Activity).filter(Activity.user_id == user_id).all()
+        for activity in activities:
+            if not activity.polyline_data:
+                continue
+            paces = calculate_pace_dynamics(activity.polyline_data, activity.distance, activity.moving_time)
+            for distance_km, effort in find_best_efforts(paces).items():
+                current_best = global_best.get(distance_km)
+                if current_best is None or effort.time_seconds < current_best["time_seconds"]:
+                    global_best[distance_km] = {
+                        "time_seconds": effort.time_seconds,
+                        "activity_id": activity.id,
+                        "achieved_on": _as_datetime(activity.start_date).strftime("%d %b %Y"),
+                    }
+
+    bests = []
+    for distance_km in (1, 5, 10):
+        best = global_best.get(distance_km)
+        if best:
+            bests.append({
+                "distance_km": distance_km,
+                "reached": True,
+                "time_display": format_seconds_as_clock(best["time_seconds"]),
+                "pace_display": format_seconds_as_clock(best["time_seconds"] / distance_km),
+                "activity_id": best["activity_id"],
+                "achieved_on": best["achieved_on"],
+            })
+        else:
+            bests.append({"distance_km": distance_km, "reached": False})
+
+    return render_template("best_efforts.html", bests=bests)

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Best Efforts &middot; Endure &amp; Elevate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand:       #0b5c7e;
+    --brand-deep:  #073b52;
+    --brand-mid:   #0e6d94;
+    --ink:         #12262f;
+    --muted:       #55707c;
+    --line:        #cfdde3;
+    --page:        #f5f8fa;
+    --tint:        #e4eff4;
+    --gold:        #b8860b;
+    --gold-tint:   #fbf1dc;
+
+    --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+    --font-body:    "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    font-family: var(--font-body);
+    color: var(--ink);
+    background: var(--page);
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    width: 100%;
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 clamp(20px, 4vw, 40px);
+  }
+
+  /* ---------- Header band ---------- */
+  .band {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    color: #fff;
+    background: linear-gradient(160deg, var(--brand-deep) 0%, var(--brand) 65%, var(--brand-mid) 100%);
+    padding-bottom: clamp(28px, 5vw, 48px);
+  }
+  .contours {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    z-index: -1;
+    fill: none; stroke: #fff; stroke-width: 1; stroke-opacity: .13;
+    animation: fade-in 1.6s ease-out both;
+  }
+  .contours .major { stroke-opacity: .28; stroke-width: 1.4; }
+  @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+  .bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 0 clamp(28px, 5vw, 52px);
+  }
+  .brand {
+    display: flex; align-items: center; gap: 12px;
+    color: inherit; text-decoration: none;
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 1.15rem; letter-spacing: -.01em; white-space: nowrap;
+  }
+  .brand:focus-visible { outline: 3px solid rgba(255,255,255,.8); outline-offset: 4px; border-radius: 10px; }
+  .brand-mark {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: #fff; color: var(--brand);
+    display: grid; place-items: center;
+  }
+  h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    letter-spacing: -.025em;
+    line-height: 1.05;
+  }
+  .subtitle { margin: 10px 0 0; color: rgba(255,255,255,.82); font-size: 1rem; max-width: 48ch; }
+
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: rgba(255,255,255,.85); text-decoration: none;
+    font-size: .9rem; font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .back-link:hover { color: #fff; }
+  .back-link:focus-visible { outline: 3px solid rgba(255,255,255,.8); outline-offset: 3px; border-radius: 8px; }
+
+  /* ---------- User menu ---------- */
+  .user { position: relative; }
+  .user-btn {
+    display: flex; align-items: center; gap: 10px;
+    height: 42px; padding: 0 12px 0 6px;
+    font: inherit; font-size: .95rem; font-weight: 500; color: #fff;
+    background: rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.28);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background-color .15s;
+  }
+  .user-btn:hover, .user-btn[aria-expanded="true"] { background: rgba(255,255,255,.22); }
+  .avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: #fff; color: var(--brand);
+    display: grid; place-items: center;
+    font-weight: 600; font-size: .9rem;
+  }
+  .user-name { max-width: 16ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chev { transition: transform .15s; }
+  .user-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+
+  .menu {
+    position: absolute; right: 0; top: calc(100% + 8px);
+    min-width: 170px;
+    padding: 6px;
+    background: #fff; color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(7, 59, 82, .18);
+    z-index: 10;
+  }
+  .menu[hidden] { display: none; }
+  .menu a {
+    display: block; padding: 10px 12px;
+    color: var(--ink); font-weight: 500; text-decoration: none;
+    border-radius: 8px;
+  }
+  .menu a:hover { background: var(--page); }
+
+  /* ---------- Main content ---------- */
+  main.wrap { padding: 32px 0 56px; display: flex; flex-direction: column; gap: 20px; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+  @media (max-width: 760px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  .effort-card {
+    display: flex; flex-direction: column; gap: 4px;
+    background: #fff;
+    border: 1.5px solid var(--line);
+    border-radius: 14px;
+    padding: 24px;
+    position: relative;
+  }
+  .effort-card .distance-label {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 600; font-size: .9rem; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .03em;
+  }
+  .effort-card .medal {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--gold-tint); color: var(--gold);
+    display: grid; place-items: center; flex-shrink: 0;
+  }
+  .effort-card .time {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.1rem, 4vw, 2.6rem);
+    letter-spacing: -.02em;
+    color: var(--brand-deep);
+    margin: 4px 0 0;
+  }
+  .effort-card .pace {
+    color: var(--muted); font-size: .92rem; margin: 0;
+  }
+  .effort-card .source-link {
+    margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px;
+  }
+  .effort-card .source-link a {
+    color: var(--brand); text-decoration: none; font-weight: 600; font-size: .88rem;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .effort-card .source-link a:hover { text-decoration: underline; }
+  .effort-card .achieved-date { color: var(--muted); font-size: .82rem; white-space: nowrap; }
+
+  /* Empty state per-card, when that distance hasn't been reached yet */
+  .effort-card.locked { color: var(--muted); }
+  .effort-card.locked .time { color: var(--muted); font-size: 1.3rem; }
+  .effort-card.locked .medal { background: var(--tint); color: var(--muted); }
+
+  /* Full empty state: no runs with GPS data at all */
+  .empty-state { text-align: center; padding: 48px 28px; background: #fff; border: 1.5px solid var(--line); border-radius: 14px; }
+  .empty-state .icon {
+    width: 56px; height: 56px; margin: 0 auto 18px;
+    border-radius: 14px; background: var(--tint); color: var(--brand);
+    display: grid; place-items: center;
+  }
+  .empty-state h2 { margin: 0 0 8px; font-family: var(--font-display); font-size: 1.2rem; }
+  .empty-state p { margin: 0 auto; max-width: 46ch; color: var(--muted); font-size: .95rem; line-height: 1.55; }
+
+  .explainer {
+    background: #fff; border: 1.5px solid var(--line); border-radius: 14px; padding: 24px 28px;
+  }
+  .explainer h2 { margin: 0 0 8px; font-family: var(--font-display); font-size: 1rem; font-weight: 700; }
+  .explainer p { margin: 0; color: var(--muted); font-size: .88rem; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<header class="band">
+  <svg class="contours" viewBox="0 0 800 400" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M-20,60 C120,20 260,100 400,60 S680,20 820,60" />
+    <path class="major" d="M-20,120 C140,80 260,160 420,120 S680,80 820,120" />
+    <path d="M-20,180 C140,140 300,220 440,180 S700,140 820,180" />
+    <path d="M-20,260 C160,220 300,300 460,260 S720,220 820,260" />
+    <path class="major" d="M-20,330 C160,290 320,360 480,330 S740,290 820,330" />
+  </svg>
+  <div class="wrap">
+    <div class="bar">
+      <a class="brand" href="{{ url_for('token.back_to_panel') }}">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="7"/><path d="M12 14v-3.5M10 2.5h4M12 2.5V7"/></svg>
+        </span>
+        Endure &amp; Elevate
+      </a>
+
+      <div class="user">
+        <button class="user-btn" id="user-btn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="user-menu">
+          <span class="avatar" aria-hidden="true">{{ (user_name or 'U')[0]|upper }}</span>
+          <span class="user-name">{{ user_name }}</span>
+          <svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="menu" id="user-menu" hidden>
+          <a href="{{ url_for('user.logout') }}">Log out</a>
+        </div>
+      </div>
+    </div>
+
+    <a class="back-link" href="{{ url_for('token.back_to_panel') }}">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>
+      Back to Home
+    </a>
+    <h1>Best Efforts</h1>
+    <p class="subtitle">Your fastest 1K, 5K and 10K, found by scanning every run you've logged &mdash; not just your personal-best whole activities.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  {% if bests %}
+  <div class="grid">
+    {% for effort in bests %}
+      <div class="effort-card{% if not effort.reached %} locked{% endif %}">
+        <span class="distance-label">
+          <span class="medal" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M9 13.5 7 22l5-3 5 3-2-8.5"/></svg>
+          </span>
+          {{ effort.distance_km }}K
+        </span>
+
+        {% if effort.reached %}
+          <p class="time">{{ effort.time_display }}</p>
+          <p class="pace">{{ effort.pace_display }} /km average</p>
+          <div class="source-link">
+            <a href="{{ url_for('activity.daily_activity', activity_id=effort.activity_id) }}">
+              View that run
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+            </a>
+            <span class="achieved-date">{{ effort.achieved_on }}</span>
+          </div>
+        {% else %}
+          <p class="time">Not run yet</p>
+          <p class="pace">Log a run of {{ effort.distance_km }}K or more to unlock this.</p>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <span class="icon" aria-hidden="true">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M9 13.5 7 22l5-3 5 3-2-8.5"/></svg>
+    </span>
+    <h2>No GPS runs yet</h2>
+    <p>Best Efforts needs a recorded route (GPS polyline) to find your fastest stretches. Log a run with location data, then check back here.</p>
+  </div>
+  {% endif %}
+
+  <div class="explainer">
+    <h2>How this is found</h2>
+    <p>Each run is split into 1-kilometer segments from its recorded route. For every distance above, this scans each run for the fastest run of consecutive kilometers covering it &mdash; a sliding window, not just your single fastest kilometer repeated &mdash; then keeps the best result across your whole history.</p>
+  </div>
+</main>
+
+<script>
+  const btn = document.getElementById('user-btn');
+  const menu = document.getElementById('user-menu');
+
+  function setOpen(open) {
+    btn.setAttribute('aria-expanded', String(open));
+    menu.hidden = !open;
+  }
+  btn.addEventListener('click', (e) => { e.stopPropagation(); setOpen(menu.hidden); });
+  document.addEventListener('click', (e) => { if (!menu.contains(e.target)) setOpen(false); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !menu.hidden) { setOpen(false); btn.focus(); }
+  });
+</script>
+</body>
+</html>
